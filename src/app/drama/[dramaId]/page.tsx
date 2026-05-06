@@ -37,7 +37,7 @@ const DEMO_NODES = [
   },
   {
     id: "n3",
-    time: "EP.25 · 12:05",
+    time: "EP.25 · 12:18",
     title: "叶文洁按下回答键",
     desc: "那是人类历史上最孤独的选择——你只有一次机会，在她按下那个键之前发出警告。",
     available: true

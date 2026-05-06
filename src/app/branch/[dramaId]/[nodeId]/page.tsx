@@ -90,8 +90,17 @@ export default function BranchPage({ params }: BranchPageProps) {
 
   const [branch, setBranch] = useState<BranchType | null>(null);
   const [phase, setPhase] = useState(0);
+  const [isMuted, setIsMuted] = useState(true);
   const hasPersistedRef = useRef(false);
   const hasAnimatedRef = useRef(false);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+
+  const handleToggleMute = () => {
+    const el = videoRef.current;
+    if (!el) return;
+    el.muted = !el.muted;
+    setIsMuted(el.muted);
+  };
 
   useEffect(() => {
     const detected = readBranch(dramaId, nodeId);
@@ -185,22 +194,44 @@ export default function BranchPage({ params }: BranchPageProps) {
             }}
           />
           {ready && videoSrc ? (
-            <video
-              src={videoSrc}
-              autoPlay
-              muted
-              loop
-              playsInline
-              style={{
-                position: "relative",
-                zIndex: 5,
-                width: "min(820px, 70vw)",
-                aspectRatio: "16/9",
-                border: `1px solid ${PRIMARY}55`,
-                background: "rgba(0,0,0,.5)",
-                objectFit: "cover"
-              }}
-            />
+            <div style={{ position: "relative", zIndex: 5, width: "min(820px, 70vw)" }}>
+              <video
+                ref={videoRef}
+                src={videoSrc}
+                autoPlay
+                muted
+                loop
+                playsInline
+                style={{
+                  width: "100%",
+                  aspectRatio: "16/9",
+                  border: `1px solid ${PRIMARY}55`,
+                  background: "rgba(0,0,0,.5)",
+                  objectFit: "cover",
+                  display: "block"
+                }}
+              />
+              <button
+                type="button"
+                onClick={handleToggleMute}
+                style={{
+                  position: "absolute",
+                  bottom: 10,
+                  right: 10,
+                  background: "rgba(13,17,23,0.75)",
+                  border: `1px solid rgba(255,255,255,0.25)`,
+                  color: "rgba(255,255,255,0.7)",
+                  fontFamily: "var(--font-mono)",
+                  fontSize: 10,
+                  letterSpacing: "0.12em",
+                  padding: "4px 10px",
+                  cursor: "pointer",
+                  zIndex: 6
+                }}
+              >
+                {isMuted ? "静 音 ×" : "已 开 声 ♪"}
+              </button>
+            </div>
           ) : (
             <div
               style={{

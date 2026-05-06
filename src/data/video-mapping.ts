@@ -14,20 +14,20 @@ export interface VideoMappingEntry {
 
 export const VIDEO_MAPPING: Record<VideoMappingKey, VideoMappingEntry> = {
   "santi/yes-button-1971/main": {
-    src: "/videos/santi/yes-main.mp4",
+    src: "https://ruxi-videos-1429011128.cos.ap-shanghai.myqcloud.com/yes-main.mp4",
     kind: "main",
     durationHintSec: 2849
   },
   "santi/yes-button-1971/branch-high": {
-    src: "/videos/santi/yes-branch-high.mp4",
+    src: "https://ruxi-videos-1429011128.cos.ap-shanghai.myqcloud.com/yes-branch-high.mp4",
     kind: "branch"
   },
   "santi/yes-button-1971/branch-medium": {
-    src: "/videos/santi/yes-branch-medium.mp4",
+    src: "https://ruxi-videos-1429011128.cos.ap-shanghai.myqcloud.com/yes-branch-medium.mp4",
     kind: "branch"
   },
   "santi/yes-button-1971/branch-low": {
-    src: "/videos/santi/yes-branch-low.mp4",
+    src: "https://ruxi-videos-1429011128.cos.ap-shanghai.myqcloud.com/yes-branch-low.mp4",
     kind: "branch"
   },
   "santi/yes-button-1971/placeholder-loop": {
