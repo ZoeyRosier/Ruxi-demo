@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>入戏 · RUXI · Print</title>
+<link rel="stylesheet" href="styles.css">
+<style>
+  @page { size: 1440px 900px; margin: 0; }
+  html, body { background: #0A0A0F !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body { overflow: visible !important; }
+  #root { display: block; }
+
+  .print-page {
+    width: 1440px;
+    height: 900px;
+    position: relative;
+    overflow: hidden;
+    page-break-after: always;
+    break-after: page;
+    background: #0A0A0F;
+  }
+  .print-page:last-child { page-break-after: auto; break-after: auto; }
+  .print-page > div, .print-page > section { animation: none !important; }
+  .print-label {
+    position: absolute; top: 14px; left: 50%; transform: translateX(-50%);
+    z-index: 9999;
+    padding: 6px 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: #8B7FB8;
+    background: rgba(0,0,0,.6);
+    border: 1px solid rgba(139,127,184,.4);
+  }
+  /* Disable fixed positioning so headers paginate correctly */
+  .print-page header { position: absolute !important; }
+  /* Hide dev nav and tweaks panel */
+  body > div[style*="position:fixed"]:not(.print-page),
+  [data-tweaks-panel],
+  [data-tweaks-fab] { display: none !important; }
+  @keyframes blink { 0%,100% {opacity:1;} }
+  *, *::before, *::after { animation-play-state: paused !important; }
+</style>
+<style>
+  /* Match dynamic CSS vars from app */
+  @keyframes glitchOverlay { 0%,100% { opacity: 0; } }
+  @keyframes fadeBlink { 0%,100% { opacity: 0; } }
+  @keyframes particleDrift { from,to { transform: translate(0,0); } }
+  @keyframes flowRight { from,to { left: 50%; opacity: .5; } }
+  @keyframes pulseBadge { 0%,100% {} }
+  @keyframes scanmove { 0%,100% { background-position: 0 0; } }
+  @keyframes pulseDot { 0%,100% { opacity: 1; } }
+  @keyframes fadeUp { from,to { opacity: 1; transform: none; } }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script src="themes.js"></script>
+<!-- Stub tweaks panel so components import cleanly -->
+<script type="text/babel">
+  window.useTweaks = (d) => [d, () => {}];
+  window.TweaksPanel = ({children}) => null;
+  window.TweakSection = () => null;
+  window.TweakRadio = () => null;
+  window.TweakSelect = () => null;
+  window.TweakToggle = () => null;
+</script>
+<script type="text/babel" src="core.jsx"></script>
+<script type="text/babel" src="page-home.jsx"></script>
+<script type="text/babel" src="page-detail.jsx"></script>
+<script type="text/babel" src="page-watch.jsx"></script>
+<script type="text/babel" src="page-compose.jsx"></script>
+<script type="text/babel" src="page-archive.jsx"></script>
+
+<script type="text/babel">
+const { useEffect } = React;
+const santi = window.DRAMA_THEMES.santi;
+window.applyTheme(santi);
+
+function Page({label, children}) {
+  return (
+    <div className="print-page">
+      <div className="print-label">◆ {label}</div>
+      {children}
+    </div>
+  );
+}
+
+function PrintAll() {
+  useEffect(() => { window.applyTheme(santi); }, []);
+  return (
+    <>
+      <Page label="01 · 首页 / HOME · BRAND LAYER">
+        <window.HomePage onSelectDrama={()=>{}} onNav={()=>{}} />
+      </Page>
+      <Page label="02 · 剧目详情 / DETAIL · BRAND × THEME">
+        <window.DetailPage dramaId="santi" onBack={()=>{}} onEnter={()=>{}} onNav={()=>{}} />
+      </Page>
+      <Page label="03 · 剧集观看 / WATCH · 100% THEME">
+        <window.WatchPage theme={santi} nodeIndex={0} onTriggerNode={()=>{}} onExit={()=>{}} />
+      </Page>
+      <Page label="04 · UI 唤起 / AWAKENING · 100% THEME ⭐">
+        <AwakeningStatic theme={santi} />
+      </Page>
+      <Page label="05 · 消息撰写 / COMPOSE · 100% THEME ⭐">
+        <ComposeStatic theme={santi} />
+      </Page>
+      <Page label="06 · AI 评分 / SCORE · 80% THEME + 20% BRAND">
+        <window.ScorePage theme={santi} message="她已经太久没有想起母亲了。那只逃走的鸟,还在你身上。" onContinue={()=>{}} onExit={()=>{}} />
+      </Page>
+      <Page label="07 · 分支结局 / BRANCH · 100% THEME">
+        <BranchStatic theme={santi} />
+      </Page>
+      <Page label="08 · 印记档案 / ARCHIVE · 100% BRAND">
+        <window.ArchivePage onNav={()=>{}} onReplay={()=>{}} />
+      </Page>
+      <Page label="09 · 主题切换 / 长相思">
+        <ThemePreview themeId="changxiangsi" />
+      </Page>
+      <Page label="10 · 主题切换 / 庆余年">
+        <ThemePreview themeId="qingyunian" />
+      </Page>
+      <Page label="11 · 主题切换 / 繁花">
+        <ThemePreview themeId="fanhua" />
+      </Page>
+    </>
+  );
+}
+
+// Static versions: bypass internal phase-based animation gating
+function AwakeningStatic({theme}) {
+  // Force all phases visible
+  const orig = window.useTypewriter;
+  window.useTypewriter = (txt) => [txt, true];
+  const orig2 = React.useState;
+  // Just render via the regular component — but force phase by patching state initial
+  // Simpler: inline a static version
+  window.useTypewriter = orig;
+  return (
+    <div style={{position:'absolute', inset:0, background:theme.palette.bg, display:'flex', alignItems:'center', justifyContent:'center', flexDirection:'column'}} className="tex-grain">
+      <div style={{position:'absolute', inset:0, background:'repeating-linear-gradient(0deg, transparent 0, transparent 2px, rgba(57,255,20,.08) 2px, rgba(57,255,20,.08) 3px)', pointerEvents:'none'}}/>
+      <window.Particles color={theme.palette.primary} density={50} />
+      <div style={{position:'relative', zIndex:5, textAlign:'center', maxWidth:720, padding:40}}>
+        <div style={{width:140, height:140, margin:'0 auto 40px', position:'relative'}}>
+          <div style={{position:'absolute', inset:0, border:`1px solid ${theme.palette.primary}`, transform:'rotate(45deg)', boxShadow:`0 0 30px ${theme.palette.primary}80, inset 0 0 30px ${theme.palette.primary}40`}}/>
+          <div style={{position:'absolute', inset:14, border:`1px solid ${theme.palette.primary}66`, transform:'rotate(45deg)'}}/>
+          <div style={{position:'absolute', inset:0, display:'flex', alignItems:'center', justifyContent:'center', fontFamily:'var(--font-display)', fontSize:28, fontWeight:900, color:theme.palette.primary, textShadow:`0 0 14px ${theme.palette.primary}`}}>1379</div>
+        </div>
+        <div style={{fontFamily:'var(--font-mono)', fontSize:11, letterSpacing:'0.4em', color:theme.palette.accent, marginBottom:16}}>◆ {theme.metaphors.cipher} ◆</div>
+        <h1 style={{fontFamily:'var(--font-mono)', fontSize:48, fontWeight:700, color:theme.palette.primary, letterSpacing:'0.15em', marginBottom:36, textShadow:`0 0 14px ${theme.palette.primary}80`}}>{theme.metaphors.identity}</h1>
+        <div style={{fontSize:18, color:'rgba(255,255,255,.85)', letterSpacing:'0.08em', lineHeight:2, marginBottom:56, fontFamily:'var(--font-mono)', whiteSpace:'pre-line'}}>{`目标:阻止叶文洁按下发送键。\n你只有一次发送机会。`}</div>
+        <button className="btn btn-theme" style={{padding:'18px 48px', fontSize:13}}>◆ 接 受 介 入  /  ACCEPT</button>
+        <div style={{marginTop:24, fontFamily:'var(--font-mono)', fontSize:10, letterSpacing:'0.3em', color:'rgba(255,255,255,.4)'}}>⚠  你 只 有 一 次 介 入 机 会  · ONE-SHOT</div>
+      </div>
+    </div>
+  );
+}
+
+function ComposeStatic({theme}) {
+  // Pre-fill text so right side mirrors
+  return <ComposeWithMessage theme={theme} initial="她已经太久没有想起母亲了。那只逃走的鸟,还在你身上。请把它放飞。" />;
+}
+
+function ComposeWithMessage({theme, initial}) {
+  return (
+    <div style={{position:'absolute', inset:0, background:theme.palette.bg, color:'#fff'}} className="tex-grain">
+      <window.ThemeHeader theme={theme} onExit={()=>{}} label={`${theme.metaphors.cipher} · 介入终端`} />
+      <div style={{position:'absolute', top:70, left:'50%', transform:'translateX(-50%)', zIndex:20, padding:'10px 24px', border:`1px solid ${theme.palette.accent}`, background:'rgba(0,0,0,.5)', fontFamily:'var(--font-mono)', fontSize:11, color:theme.palette.accent, letterSpacing:'0.3em'}}>⚠  ONE-SHOT  ·  你 只 有 一 次 发 送 机 会</div>
+      <div style={{position:'absolute', inset:0, paddingTop:130, paddingBottom:110, display:'grid', gridTemplateColumns:'1fr 80px 1fr'}}>
+        <div style={{margin:'0 0 0 32px', border:`1px solid ${theme.palette.primary}`, background:'rgba(0,0,0,.55)', boxShadow:`inset 0 0 40px ${theme.palette.primary}15, 0 0 30px ${theme.palette.primary}25`, display:'flex', flexDirection:'column'}}>
+          <div style={{padding:'12px 18px', borderBottom:`1px solid ${theme.palette.primary}55`, fontFamily:'var(--font-mono)', fontSize:11, color:theme.palette.primary, letterSpacing:'0.2em', display:'flex', justifyContent:'space-between'}}>
+            <span>SENDER · {theme.metaphors.identity}</span>
+            <span>TX 18.45 MHz</span>
+          </div>
+          <div style={{flex:1, padding:'24px 22px'}}>
+            <div style={{fontFamily:'var(--font-mono)', fontSize:11, color:theme.palette.primary, letterSpacing:'0.2em', marginBottom:14, opacity:.7}}>
+              &gt; 1971-10-21T08:14:00 · CONNECTING TO 叶文洁...
+            </div>
+            <div style={{color:theme.palette.primary, fontFamily:'var(--font-mono)', fontSize:15, lineHeight:1.8, letterSpacing:'0.05em', textShadow:`0 0 6px ${theme.palette.primary}80`, whiteSpace:'pre-wrap'}}>{initial}</div>
+            <div style={{marginTop:14, display:'flex', justifyContent:'space-between', fontFamily:'var(--font-mono)', fontSize:11, color:'rgba(255,255,255,.4)', letterSpacing:'0.15em'}}>
+              <span style={{color:theme.palette.primary, opacity:.7}}>▮ INPUT_ACTIVE</span>
+              <span>{initial.length} / 280</span>
+            </div>
+          </div>
+        </div>
+        <div style={{position:'relative', display:'flex', alignItems:'center', justifyContent:'center'}}>
+          <div style={{position:'absolute', top:'50%', left:0, right:0, height:1, background:`linear-gradient(90deg, transparent, ${theme.palette.primary}, ${theme.palette.accent}, transparent)`, opacity:.8}}/>
+          <div style={{position:'absolute', top:'50%', left:'50%', transform:'translate(-50%, -50%) rotate(-90deg)', fontFamily:'var(--font-mono)', fontSize:9, color:theme.palette.secondary, letterSpacing:'0.4em', whiteSpace:'nowrap', opacity:.7}}>1.27 LIGHT YEARS</div>
+        </div>
+        <div style={{margin:'0 32px 0 0', border:`1px solid ${theme.palette.accent}`, background:'rgba(0,0,0,.55)', boxShadow:`inset 0 0 40px ${theme.palette.accent}15`, display:'flex', flexDirection:'column', position:'relative', overflow:'hidden'}}>
+          <div style={{padding:'12px 18px', borderBottom:`1px solid ${theme.palette.accent}55`, fontFamily:'var(--font-mono)', fontSize:11, color:theme.palette.accent, letterSpacing:'0.2em', display:'flex', justifyContent:'space-between'}}>
+            <span>RECEIVER · 叶文洁</span><span>红岸基地</span>
+          </div>
+          <div style={{flex:1, position:'relative'}}>
+            <div style={{position:'absolute', inset:0, background:theme.coverGradient, opacity:.5}}/>
+            <div style={{position:'absolute', inset:0, padding:24, display:'flex', flexDirection:'column', justifyContent:'flex-end'}}>
+              <div style={{padding:'14px 18px', background:'rgba(0,0,0,.65)', border:`1px solid ${theme.palette.accent}55`, color:theme.palette.accent, fontFamily:'var(--font-mono)', fontSize:14, lineHeight:1.8, textShadow:`0 0 6px ${theme.palette.accent}60`, whiteSpace:'pre-wrap'}}>{initial}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style={{position:'absolute', bottom:0, left:0, right:0, padding:'20px 32px', borderTop:`1px solid ${theme.palette.primary}33`, background:'rgba(0,0,0,.5)', display:'flex', alignItems:'center', justifyContent:'space-between'}}>
+        <div style={{fontFamily:'var(--font-mono)', fontSize:11, color:'rgba(255,255,255,.5)', letterSpacing:'0.18em', display:'flex', gap:24}}>
+          <span><span style={{color:theme.palette.primary}}>●</span> CHANNEL OPEN</span>
+          <span>ENCRYPTION: {theme.metaphors.cipher}</span>
+          <span>LATENCY: 0.0042s</span>
+        </div>
+        <button className="btn btn-theme" style={{padding:'14px 36px', fontSize:13}}>▶ 发送 / TRANSMIT</button>
+      </div>
+    </div>
+  );
+}
+
+function BranchStatic({theme}) {
+  const lines = ['她没有按下发送键。', '人类还有时间。', '— 你拯救了一个时间线。'];
+  return (
+    <div style={{position:'absolute', inset:0, background:'#000', color:'#fff', display:'flex', flexDirection:'column'}}>
+      <window.ThemeHeader theme={theme} onExit={()=>{}} label="分支结局 · ENDING" />
+      <div style={{flex:1, position:'relative', display:'flex', alignItems:'center', justifyContent:'center'}}>
+        <div style={{position:'absolute', inset:0, background:theme.coverGradient}}/>
+        <div style={{position:'absolute', inset:0, background:'repeating-linear-gradient(0deg, transparent 0, transparent 3px, rgba(57,255,20,.05) 3px, rgba(57,255,20,.05) 4px)'}}/>
+        <div style={{position:'relative', zIndex:5, width:'min(820px, 70vw)', aspectRatio:'16/9', border:`1px solid ${theme.palette.primary}55`, background:'rgba(0,0,0,.5)', display:'flex', alignItems:'center', justifyContent:'center', flexDirection:'column', gap:18, fontFamily:'var(--font-mono)', fontSize:11, letterSpacing:'0.2em', color:theme.palette.primary}}>
+          <div style={{fontSize:13}}>◇ 分 支 视 频  /  BRANCH CLIP</div>
+          <div style={{fontSize:10, opacity:.6}}>5s · 叶文洁 · CLOSE-UP</div>
+          <div style={{width:50, height:50, borderRadius:'50%', border:`1px solid ${theme.palette.primary}`, display:'flex', alignItems:'center', justifyContent:'center'}}>▶</div>
+        </div>
+      </div>
+      <div style={{padding:'40px 60px 60px', textAlign:'center'}}>
+        {lines.map((l, i) => (
+          <div key={i} style={{fontFamily:'var(--font-mono)', fontSize: i===2?18:26, color: i===2?theme.palette.accent:theme.palette.primary, letterSpacing:'0.15em', marginBottom:14, textShadow:`0 0 14px ${(i===2?theme.palette.accent:theme.palette.primary)}80`}}>{l}</div>
+        ))}
+        <button className="btn btn-theme-outline" style={{marginTop:30, padding:'14px 36px'}}>◇ 查 看 我 的 印 记 / VIEW MARK</button>
+      </div>
+    </div>
+  );
+}
+
+function ThemePreview({themeId}) {
+  const t = window.DRAMA_THEMES[themeId];
+  React.useEffect(()=>{ window.applyTheme(t); }, []);
+  // For each theme, render its watch + awakening side-by-side as a flavor showcase
+  return (
+    <div style={{position:'absolute', inset:0, background:t.palette.bg, color:'#fff', padding:60, overflow:'hidden'}}>
+      <div style={{position:'absolute', top:24, left:32, fontFamily:'var(--font-mono)', fontSize:11, color:t.palette.primary, letterSpacing:'0.3em', textShadow:`0 0 8px ${t.palette.primary}`}}>
+        ◆ {t.enName} · {t.container}
+      </div>
+      <div style={{position:'absolute', inset:0, background: t.coverGradient, opacity:.6}}/>
+      <window.Particles color={t.palette.primary} density={40} />
+      <div style={{position:'relative', zIndex:5, height:'100%', display:'grid', gridTemplateColumns:'1fr 1fr', gap:32, paddingTop:60}}>
+        {/* watch preview */}
+        <div style={{border:`1px solid ${t.palette.primary}55`, padding:24, background:'rgba(0,0,0,.4)', display:'flex', flexDirection:'column'}}>
+          <div style={{fontFamily:'var(--font-mono)', fontSize:10, color:t.palette.primary, letterSpacing:'0.3em', marginBottom:18}}>● 观看页 / WATCH</div>
+          <div style={{flex:1, border:`1px dashed ${t.palette.primary}40`, background:t.coverGradient, display:'flex', alignItems:'center', justifyContent:'center', fontFamily:'var(--font-zh-serif)', fontSize:32, color:t.palette.primary, letterSpacing:'0.15em', textShadow:`0 0 14px ${t.palette.primary}`}}>{t.name}</div>
+        </div>
+        {/* awakening */}
+        <div style={{border:`1px solid ${t.palette.accent}55`, padding:24, background:'rgba(0,0,0,.4)', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center'}}>
+          <div style={{fontFamily:'var(--font-mono)', fontSize:10, color:t.palette.accent, letterSpacing:'0.3em', marginBottom:30, alignSelf:'flex-start'}}>● 唤起 / AWAKENING</div>
+          <div style={{width:100, height:100, position:'relative', marginBottom:24}}>
+            <div style={{position:'absolute', inset:0, border:`1px solid ${t.palette.primary}`, transform:'rotate(45deg)', boxShadow:`0 0 24px ${t.palette.primary}80`}}/>
+            <div style={{position:'absolute', inset:0, display:'flex', alignItems:'center', justifyContent:'center', fontFamily:'var(--font-zh-serif)', fontSize:32, fontWeight:900, color:t.palette.primary, textShadow:`0 0 14px ${t.palette.primary}`}}>{themeId==='changxiangsi'?'寄':themeId==='qingyunian'?'密':'繁'}</div>
+          </div>
+          <div style={{fontFamily:'var(--font-zh-serif)', fontSize:24, color:t.palette.primary, letterSpacing:'0.15em', textAlign:'center', marginBottom:14, textShadow:`0 0 10px ${t.palette.primary}80`}}>{t.metaphors.identity}</div>
+          <div style={{fontFamily:'var(--font-mono)', fontSize:11, color:t.palette.accent, letterSpacing:'0.3em'}}>◆ {t.metaphors.cipher}</div>
+        </div>
+      </div>
+      <div style={{position:'absolute', bottom:32, left:60, right:60, display:'grid', gridTemplateColumns:'repeat(5, 1fr)', gap:14, fontFamily:'var(--font-mono)', fontSize:10, color:'rgba(255,255,255,.7)', letterSpacing:'0.18em'}}>
+        {[['PRIMARY', t.palette.primary], ['ACCENT', t.palette.accent], ['SECONDARY', t.palette.secondary], ['TERTIARY', t.palette.tertiary], ['BG', t.palette.bg]].map(([k,v]) => (
+          <div key={k} style={{padding:'10px 12px', border:'1px solid rgba(255,255,255,.15)', background:'rgba(0,0,0,.5)'}}>
+            <div style={{display:'flex', alignItems:'center', gap:8}}>
+              <span style={{width:10, height:10, background:v, boxShadow:`0 0 6px ${v}`}}/>
+              <span>{k}</span>
+            </div>
+            <div style={{marginTop:4, fontSize:9, opacity:.6}}>{v}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<PrintAll />);
+
+// auto-print after fonts + Babel + render
+(async () => {
+  if (document.fonts && document.fonts.ready) await document.fonts.ready;
+  setTimeout(() => window.print(), 2000);
+})();
+</script>
+</body>
+</html>

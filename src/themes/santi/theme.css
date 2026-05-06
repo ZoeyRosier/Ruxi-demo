@@ -1,0 +1,24 @@
+/* 此文件属于主题层 */
+[data-theme="santi"] {
+  /* Santi palette overrides */
+  --color-bg-primary: #0d1117;
+  --color-bg-card: #121720;
+  --color-text-primary: #39ff14;
+  --color-text-secondary: #9ca3af;
+  --color-accent: #ffb347;
+  --color-secondary: #00d4ff;
+  --color-tertiary: #9d4edd;
+
+  /* Typography overrides */
+  --font-display: "Orbitron", "Source Han Sans", sans-serif;
+  --font-body: "Source Han Sans", "PingFang SC", sans-serif;
+  --font-mono: "JetBrains Mono", "Menlo", monospace;
+
+  /* Texture controls */
+  --texture-scanline-opacity: 0.05;
+  --texture-grain-opacity: 0.10;
+
+  /* Theme marker */
+  --active-theme-id: "santi";
+  background: var(--theme-bg);
+}

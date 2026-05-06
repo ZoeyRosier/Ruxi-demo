@@ -1,0 +1,18 @@
+/* 此文件属于主题层 */
+[data-theme="fanhua"] {
+  --color-bg-primary: #0f0814;
+  --color-bg-card: #1d1026;
+  --color-text-primary: #f5d7e6;
+  --color-text-secondary: #c2a8b8;
+  --color-accent: #ff6b9d;
+  --color-secondary: #d4a574;
+  --color-tertiary: #7dd3d8;
+
+  --font-display: "Source Han Serif SC", "Songti SC", serif;
+  --font-body: "Source Han Sans", "PingFang SC", sans-serif;
+  --font-mono: "JetBrains Mono", "Menlo", monospace;
+
+  --texture-scanline-opacity: 0;
+  --texture-grain-opacity: 0.08;
+  --active-theme-id: "fanhua";
+}
